@@ -1,12 +1,10 @@
 package main
 
 import (
+	"MGS/api"
 	"MGS/client"
 	"MGS/osmdata"
-	"MGS/routing"
-	"MGS/shared"
 	"fmt"
-	"os"
 
 	"github.com/golang/geo/s2"
 )
@@ -49,12 +47,6 @@ func main() {
 	}
 	fmt.Println("init done")
 
-	a := routing.LatLonPair{55.764764, 37.605591}
-	b := routing.LatLonPair{55.764958, 37.611228}
-	path := routing.GetRouteFromLatLon(a, b, roads.Nodes, roads.Shi, roads.Shapes, roads.NodeIndex)
-
-	pathByte := shared.MustMarshallToJSON(path)
-	os.WriteFile("data/path_test.json", pathByte, 0600)
-	// api.Roads = roads
-	// api.Serve()
+	api.Roads = roads
+	api.Serve()
 }

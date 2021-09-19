@@ -5,6 +5,7 @@ import (
 	"MGS/routing"
 	"MGS/shared"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,8 @@ var (
 func Serve() {
 	router := gin.Default()
 
-	router.GET("/mapping/find_route", rougingHandler)
+	router.GET("/mapping/find_route", routingHandler)
+	router.GET("/cameras/get", cameraHandler)
 
 	router.Run()
 }
@@ -25,7 +27,7 @@ type RouteRequest struct {
 	Targets []routing.LatLonPair `json:"targets"`
 }
 
-func rougingHandler(ctx *gin.Context) {
+func routingHandler(ctx *gin.Context) {
 	var request []routing.LatLonPair
 	if err := ctx.BindJSON(&request); err != nil {
 		return
@@ -36,4 +38,11 @@ func rougingHandler(ctx *gin.Context) {
 
 	path := routing.GetRouteFromLatLon(request[0], request[1], Roads.Nodes, Roads.Shi, Roads.Shapes, Roads.NodeIndex)
 	ctx.JSON(http.StatusOK, shared.MustMarshallToJSON(path))
+}
+func cameraHandler(ctx *gin.Context) {
+	b, err := os.ReadFile("data/cache/cameras.json")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, "")
+	}
+	ctx.JSON(http.StatusOK, b)
 }
