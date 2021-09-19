@@ -20,7 +20,7 @@ func Serve() {
 	router.GET("/mapping/find_route", routingHandler)
 	router.GET("/cameras/get", cameraHandler)
 
-	router.Run()
+	router.Run(":80")
 }
 
 func routingHandler(ctx *gin.Context) {

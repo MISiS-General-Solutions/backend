@@ -5,6 +5,8 @@ import (
 	"MGS/client"
 	"MGS/osmdata"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/golang/geo/s2"
 )
@@ -37,8 +39,23 @@ func initData(nw, se s2.LatLng) (*osmdata.OsmData, error) {
 	return roads, nil
 }
 func main() {
-	nw := s2.LatLngFromDegrees(55.767944, 37.600997)
-	se := s2.LatLngFromDegrees(55.763467, 37.615685)
+	args := os.Args[1:]
+	if len(args) != 4 {
+		panic("must have 4 arguments: nw lat, nw lng, se lat, se lng")
+	}
+	coords := make([]float64, 4)
+	var err error
+	for i := range args {
+		coords[i], err = strconv.ParseFloat(args[i], 64)
+		if err != nil {
+			panic(err)
+		}
+	}
+	nw := s2.LatLngFromDegrees(coords[0], coords[1])
+	se := s2.LatLngFromDegrees(coords[2], coords[3])
+
+	// nw := s2.LatLngFromDegrees(55.767944, 37.600997)
+	// se := s2.LatLngFromDegrees(55.763467, 37.615685)
 
 	roads, err := initData(nw, se)
 	if err != nil {
