@@ -93,30 +93,3 @@ func GetRoute(a, b int64, nodes map[int64]*Node) Path {
 	}
 	return Path{Coords: res, Distance: distance}
 }
-
-// func ReadPythonLatLons(path string) ([]s2.LatLng, error) {
-// 	b, err := os.ReadFile(path)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	bb := bytes.Split(b, []byte{'('})[1:]
-// 	res := make([]s2.LatLng, len(bb))
-// 	for i, coords := range bb {
-// 		s := string(coords)
-// 		_ = s
-// 		sepPos := bytes.IndexByte(coords, ',')
-// 		if sepPos == -1 {
-// 			return nil, errors.New("incorrect format")
-// 		}
-// 		lat, err := strconv.ParseFloat(string(coords[:sepPos]), 64)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		lon, err := strconv.ParseFloat(string(coords[sepPos+2:len(coords)-1]), 64)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		res[i] = s2.LatLngFromDegrees(lat, lon)
-// 	}
-// 	return res, nil
-// }

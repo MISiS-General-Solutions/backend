@@ -10,7 +10,6 @@ import (
 )
 
 func initData(nw, se s2.LatLng) (*osmdata.OsmData, error) {
-	//camera := s2.LatLngFromDegrees(55.766376, 37.609623)
 
 	settings := fmt.Sprintf("[timeout:120][bbox:%v,%v,%v,%v];", se.Lat.Degrees(), nw.Lng.Degrees(), nw.Lat.Degrees(), se.Lng.Degrees())
 
