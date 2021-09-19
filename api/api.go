@@ -45,5 +45,5 @@ func cameraHandler(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "")
 	}
-	ctx.JSON(http.StatusOK, b)
+	ctx.Data(http.StatusOK, "application/json", b)
 }
