@@ -3,7 +3,6 @@ package api
 import (
 	"MGS/osmdata"
 	"MGS/routing"
-	"MGS/shared"
 	"net/http"
 	"os"
 
@@ -38,7 +37,7 @@ func routingHandler(ctx *gin.Context) {
 		fullPath.Distance += path.Distance
 	}
 
-	ctx.JSON(http.StatusOK, shared.MustMarshallToJSON(fullPath))
+	ctx.JSON(http.StatusOK, fullPath)
 }
 func cameraHandler(ctx *gin.Context) {
 	b, err := os.ReadFile("data/cache/cameras.json")
