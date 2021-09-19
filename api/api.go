@@ -17,8 +17,8 @@ var (
 func Serve() {
 	router := gin.Default()
 
-	router.GET("/mapping/find_route", routingHandler)
-	router.GET("/cameras/get", cameraHandler)
+	router.POST("/mapping/find_route", routingHandler)
+	router.POST("/cameras/get", cameraHandler)
 
 	router.Run(":80")
 }
