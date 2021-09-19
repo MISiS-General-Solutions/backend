@@ -134,3 +134,17 @@ func GetClosestNode(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, origin s2.
 	}
 	return edge.V1, nil
 }
+func StickWithAcceleration(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, origin s2.LatLng) (s2.LatLng, error) {
+	closest, err := GetClosestNode(shi, shapes, s2.PointFromLatLng(origin))
+	if err != nil {
+		return s2.LatLng{}, err
+	}
+	newLatLon := s2.LatLngFromPoint(closest)
+	dLat := newLatLon.Lat.Degrees() - origin.Lat.Degrees()
+	dLon := newLatLon.Lng.Degrees() - origin.Lng.Degrees()
+
+	return s2.LatLngFromDegrees(
+		newLatLon.Lat.Degrees()+dLat*0.2,
+		newLatLon.Lng.Degrees()+dLon*0.2,
+	), nil
+}
