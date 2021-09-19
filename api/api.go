@@ -23,10 +23,6 @@ func Serve() {
 	router.Run()
 }
 
-type RouteRequest struct {
-	Targets []routing.LatLonPair `json:"targets"`
-}
-
 func routingHandler(ctx *gin.Context) {
 	var request []routing.LatLonPair
 	if err := ctx.BindJSON(&request); err != nil {
@@ -35,9 +31,14 @@ func routingHandler(ctx *gin.Context) {
 	if len(request) < 2 {
 		ctx.JSON(http.StatusBadRequest, "need at least 2 points")
 	}
+	var fullPath routing.Path
+	for i := 1; i < len(request); i++ {
+		path := routing.GetRouteFromLatLon(request[i-1], request[i], Roads.Nodes, Roads.Shi, Roads.Shapes, Roads.NodeIndex)
+		fullPath.Coords = append(fullPath.Coords, path.Coords...)
+		fullPath.Distance += path.Distance
+	}
 
-	path := routing.GetRouteFromLatLon(request[0], request[1], Roads.Nodes, Roads.Shi, Roads.Shapes, Roads.NodeIndex)
-	ctx.JSON(http.StatusOK, shared.MustMarshallToJSON(path))
+	ctx.JSON(http.StatusOK, shared.MustMarshallToJSON(fullPath))
 }
 func cameraHandler(ctx *gin.Context) {
 	b, err := os.ReadFile("data/cache/cameras.json")
