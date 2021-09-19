@@ -3,8 +3,10 @@ package api
 import (
 	"MGS/osmdata"
 	"MGS/routing"
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +32,8 @@ func routingHandler(ctx *gin.Context) {
 	if len(request) < 2 {
 		ctx.JSON(http.StatusBadRequest, "need at least 2 points")
 	}
+	start := time.Now()
+
 	var fullPath routing.Path
 	for i := 1; i < len(request); i++ {
 		path := routing.GetRouteFromLatLon(request[i-1], request[i], Roads.Nodes, Roads.Shi, Roads.Shapes, Roads.NodeIndex)
@@ -37,6 +41,8 @@ func routingHandler(ctx *gin.Context) {
 		fullPath.Distance += path.Distance
 	}
 
+	elapsed := time.Since(start)
+	fmt.Printf("Routing  took %s\n", elapsed)
 	ctx.JSON(http.StatusOK, fullPath)
 }
 func cameraHandler(ctx *gin.Context) {
