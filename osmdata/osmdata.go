@@ -3,7 +3,6 @@ package osmdata
 import (
 	"MGS/routing"
 	"context"
-	"encoding/gob"
 	"io"
 	"os"
 
@@ -105,29 +104,4 @@ func (r *OsmData) CompileGraph() {
 		skipAdd2:
 		}
 	}
-}
-func (r *OsmData) SaveGOB(path string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	enc := gob.NewEncoder(file)
-	if err = enc.Encode(*r); err != nil {
-		return err
-	}
-	return nil
-}
-
-func LoadGOBFromFile(path string) (*OsmData, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	dec := gob.NewDecoder(file)
-	var res OsmData
-	if err = dec.Decode(&res); err != nil {
-		return nil, err
-	}
-	return &res, nil
 }

@@ -57,11 +57,12 @@ func (r *Client) Query(query string) ([]byte, error) {
 }
 func (r *Client) GetData(req string) (*osmdata.OsmData, error) {
 	fullRequest := r.settings + req
+
 	hashSum := md5.Sum([]byte(fullRequest))
 	cache, err := LoadResult(fmt.Sprintf("%v%x.osm", cacheFolder, hashSum))
 	if err != nil {
 		fmt.Println("not cached")
-		cache, err = r.Query(fullRequest)
+		cache, err := r.Query(fullRequest)
 		if err != nil {
 			return nil, err
 		}

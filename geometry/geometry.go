@@ -111,18 +111,26 @@ func GetEdgesInDistance(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, center
 	}
 	return closePoints
 }
-func GetClosestNode(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, nodeIndex map[s2.Point]int64, origin s2.Point) (int64, error) {
+func GetClosestNodeID(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, nodeIndex map[s2.Point]int64, origin s2.Point) (int64, error) {
+
+	point, err := GetClosestNode(shi, shapes, origin)
+	if err != nil {
+		return 0, err
+	}
+	return nodeIndex[point], err
+}
+func GetClosestNode(shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, origin s2.Point) (s2.Point, error) {
 
 	opts := s2.NewClosestEdgeQueryOptions().MaxResults(1)
 	edgeQuery := s2.NewClosestEdgeQuery(shi, opts)
 	edgeResult := edgeQuery.FindEdges(s2.NewMinDistanceToPointTarget(origin))
 	if len(edgeResult) != 1 {
-		return 0, errors.New("no nodes found")
+		return s2.Point{}, errors.New("no nodes found")
 	}
 	poly := shapes[edgeResult[0].ShapeID()]
 	edge := poly.Edge(int(edgeResult[0].EdgeID()))
 	if edge.V0.Distance(origin) < edge.V1.Distance(origin) {
-		return nodeIndex[edge.V0], nil
+		return edge.V0, nil
 	}
-	return nodeIndex[edge.V1], nil
+	return edge.V1, nil
 }

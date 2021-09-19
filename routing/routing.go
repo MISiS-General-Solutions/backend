@@ -14,21 +14,24 @@ type CostProfile struct {
 
 var (
 	CameraTag = osm.Tag{Key: "camera:type", Value: "fixed"}
+	BarierTag = osm.Tag{Key: "barrier", Value: "gate"}
 )
 
 func PathCost(n1, n2 *Node) float64 {
 	koef := 1.0
-	for _, tag := range n1.Tags {
-		if tag == CameraTag {
-			koef *= 5
-		}
-	}
-	for _, tag := range n2.Tags {
-		if tag == CameraTag {
-			koef *= 5
-		}
-	}
+	koef *= tagsEffect(n1)
+	koef *= tagsEffect(n2)
+
 	return koef * geometry.EuclidianDistanceApprox(n1.Lat, n2.Lat, n1.Lon, n2.Lon, geometry.RegionMoscow)
+}
+func tagsEffect(n *Node) float64 {
+	koef := 1.0
+	for _, tag := range n.Tags {
+		if tag == CameraTag || tag == BarierTag {
+			koef *= 5
+		}
+	}
+	return koef
 }
 
 type Node struct {
@@ -65,11 +68,11 @@ type Path struct {
 }
 
 func GetRouteFromLatLon(a, b LatLonPair, nodes map[int64]*Node, shi *s2.ShapeIndex, shapes map[int32]s2.Polyline, nodeIndex map[s2.Point]int64) Path {
-	aInd, err := geometry.GetClosestNode(shi, shapes, nodeIndex, s2.PointFromLatLng(s2.LatLngFromDegrees(a.Lat, a.Lon)))
+	aInd, err := geometry.GetClosestNodeID(shi, shapes, nodeIndex, s2.PointFromLatLng(s2.LatLngFromDegrees(a.Lat, a.Lon)))
 	if err != nil {
 		return Path{}
 	}
-	bInd, err := geometry.GetClosestNode(shi, shapes, nodeIndex, s2.PointFromLatLng(s2.LatLngFromDegrees(b.Lat, b.Lon)))
+	bInd, err := geometry.GetClosestNodeID(shi, shapes, nodeIndex, s2.PointFromLatLng(s2.LatLngFromDegrees(b.Lat, b.Lon)))
 	if err != nil {
 		return Path{}
 	}

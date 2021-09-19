@@ -28,7 +28,11 @@ func AddCamerasFromFile(path string, roadData, obstacleData *OsmData) error {
 		return err
 	}
 	for i, camera := range cameras {
-		center := s2.LatLngFromDegrees(camera.Coords[0], camera.Coords[1])
+		centerPoint, err := geometry.GetClosestNode(obstacleData.Shi, obstacleData.Shapes, s2.PointFromLatLng(s2.LatLngFromDegrees(camera.Coords[0], camera.Coords[1])))
+		if err != nil {
+			return nil
+		}
+		center := s2.LatLngFromPoint(centerPoint)
 		closeObstacles := geometry.GetEdgesInDistance(obstacleData.Shi, obstacleData.Shapes, center, geometry.Meter*30)
 		closeRoads := geometry.GetEdgesInDistance(roadData.Shi, roadData.Shapes, center, geometry.Meter*60)
 
